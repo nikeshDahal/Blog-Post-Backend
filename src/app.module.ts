@@ -7,7 +7,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 // import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ApolloDriver } from '@nestjs/apollo';
-// import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
+import { util } from 'prettier';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { ApolloDriver } from '@nestjs/apollo';
       sortSchema: true,
     }),
     UsersModule,
-    // AuthModule,
+    AuthModule,
   ],
   // controllers: [AppController],
   // providers: [AppService],
