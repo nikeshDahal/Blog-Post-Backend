@@ -8,6 +8,12 @@ input CreateUserInput {
   username: String!
 }
 
+input LoginInput {
+  email: String!
+  password: String!
+  username: String!
+}
+
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   removeUser(id: Int!): User!
@@ -15,6 +21,7 @@ type Mutation {
 }
 
 type Query {
+  login(loginCredentials: LoginInput!): UserType!
   user(id: Int!): User!
   users: [User!]!
 }
@@ -30,4 +37,8 @@ type User {
   email: String!
   password: String!
   username: String!
+}
+
+type UserType {
+  user: User!
 }
