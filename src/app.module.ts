@@ -2,13 +2,10 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { MongooseModule } from '@nestjs/mongoose';
-
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ApolloDriver } from '@nestjs/apollo';
 import { AuthModule } from './auth/auth.module';
-import { util } from 'prettier';
+import {AppService} from "./app.service"
 
 @Module({
   imports: [
@@ -16,12 +13,13 @@ import { util } from 'prettier';
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      context:({req})=>({req}),
       sortSchema: true,
     }),
     UsersModule,
     AuthModule,
   ],
   // controllers: [AppController],
-  // providers: [AppService],
+  providers: [AppService],
 })
 export class AppModule {}

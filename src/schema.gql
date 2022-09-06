@@ -16,21 +16,21 @@ input LoginInput {
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
-  removeUser(id: Int!): User!
+  removeUser: User!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
   login(loginCredentials: LoginInput!): UserType!
+  myProfile: User!
   user(id: Int!): User!
   users: [User!]!
 }
 
 input UpdateUserInput {
-  _id: ID!
-  email: String
-  password: String
-  username: String
+  email: String!
+  password: String!
+  username: String!
 }
 
 type User {
@@ -40,5 +40,6 @@ type User {
 }
 
 type UserType {
+  access_token: String!
   user: User!
 }

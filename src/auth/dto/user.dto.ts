@@ -5,4 +5,6 @@ import { User } from "../../users/user.entity";
 export class UserType {
     @Field(()=>User)
     user:User;
+    @Field()
+    access_token:string;
 }
