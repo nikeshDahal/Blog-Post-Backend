@@ -28,9 +28,9 @@ type Query {
 }
 
 input UpdateUserInput {
-  email: String!
-  password: String!
-  username: String!
+  email: String
+  password: String
+  username: String
 }
 
 type User {

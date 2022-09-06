@@ -56,7 +56,9 @@ export class UsersService {
     // if(existEmail){
     //   throw new BadRequestException("email already exists")
     // }
-    updateUserInput.password = passwordTransformation.to(updateUserInput.password)
+    if(updateUserInput.password){
+      updateUserInput.password = passwordTransformation.to(updateUserInput.password)
+    }
     const updatedUser = await this.userModel
       .findOneAndUpdate({ _id: id }, { $set: updateUserInput }, { new: true })
       .exec();
