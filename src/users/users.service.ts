@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,30 +16,28 @@ var mongoose = require('mongoose');
 export class UsersService {
   constructor(@InjectModel('User') private userModel: Model<User>) {}
 
-  async create(createUserInput: CreateUserInput):Promise<User> {
+  async create(createUserInput: CreateUserInput): Promise<User> {
     let user: any;
     user = await this.userModel.findOne({ email: createUserInput.email });
     if (user) {
       throw new BadRequestException('User Already Exists');
     }
-    createUserInput.password = passwordTransformation.to(createUserInput.password)
-    const {username, email , password}=createUserInput
+    createUserInput.password = passwordTransformation.to(
+      createUserInput.password,
+    );
+    const { username, email, password } = createUserInput;
     const newUser = new this.userModel({
       username,
       email,
-      password
+      password,
     });
     const createdUser = await newUser.save();
-    return createdUser
+    return createdUser;
   }
 
   async findByEmail(email: string) {
     return await this.userModel.find({ email });
   }
-
-  // async findById(id:string){
-  //   return await this.userModel.findById({_id:id})
-  // }
 
   async findAll() {
     return await this.userModel.find();
@@ -51,22 +48,24 @@ export class UsersService {
   }
 
   async update(id: string, updateUserInput: UpdateUserInput) {
+    try {
+      if (updateUserInput.password) {
+        updateUserInput.password = passwordTransformation.to(
+          updateUserInput.password,
+        );
+      }
+      const updatedUser = await this.userModel
+        .findOneAndUpdate({ _id: id }, { $set: updateUserInput }, { new: true })
+        .exec();
 
-    // const existEmail = await this.userModel.findOne({email:updateUserInput.email})
-    // if(existEmail){
-    //   throw new BadRequestException("email already exists")
-    // }
-    if(updateUserInput.password){
-      updateUserInput.password = passwordTransformation.to(updateUserInput.password)
+      if (!updatedUser) {
+        throw new NotFoundException('user not found');
+      }
+      console.log('updated user =>', updatedUser);
+      return updatedUser;
+    } catch (error) {
+      throw new BadRequestException('email already exists', error);
     }
-    const updatedUser = await this.userModel
-      .findOneAndUpdate({ _id: id }, { $set: updateUserInput }, { new: true })
-      .exec();
-
-    if (!updatedUser) {
-      throw new NotFoundException('user not found');
-    }
-    return updatedUser;
   }
 
   async remove(id: string) {
@@ -74,6 +73,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('user not found');
     }
+    console.log('removed user =>', user);
     return user;
   }
 }

@@ -46,6 +46,7 @@ export class UsersResolver {
   @Mutation(() => User)
   async updateUser(@CurrentUser() currentUser :any,@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     const user = this.usersService.update(currentUser._id, updateUserInput);
+ 
     return user;
   }
 
@@ -53,6 +54,7 @@ export class UsersResolver {
   @Mutation(() => User)
   async removeUser(@CurrentUser() currentUser :any) {
     const user = await this.usersService.remove(currentUser._id);
+ 
     return user;
   }
 }
