@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { ApolloDriver } from '@nestjs/apollo';
 import { AuthModule } from './auth/auth.module';
 import {AppService} from "./app.service"
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import {AppService} from "./app.service"
     }),
     UsersModule,
     AuthModule,
+    PostsModule,
   ],
   // controllers: [AppController],
   providers: [AppService],

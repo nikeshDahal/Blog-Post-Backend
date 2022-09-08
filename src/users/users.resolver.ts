@@ -27,6 +27,7 @@ export class UsersResolver {
   @Query(() => [User], { name: 'users' })
   async findAll() {
     const users = await this.usersService.findAll();
+    console.log(users)
     return users;
   }
 

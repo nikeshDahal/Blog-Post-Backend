@@ -15,7 +15,6 @@ var mongoose = require('mongoose');
 @Injectable()
 export class UsersService {
   constructor(@InjectModel('User') private userModel: Model<User>) {}
-
   async create(createUserInput: CreateUserInput): Promise<User> {
     let user: any;
     user = await this.userModel.findOne({ email: createUserInput.email });
@@ -76,4 +75,8 @@ export class UsersService {
     console.log('removed user =>', user);
     return user;
   }
+
+  // async findUserDetails(id:string){
+  //   return await this.userModel.findOne({_id:id})
+  // }
 }

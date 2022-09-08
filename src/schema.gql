@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreatePostInput {
+  isPublic: Boolean!
+  postDescription: String!
+  postTitle: String!
+}
+
 input CreateUserInput {
   email: String!
   password: String!
@@ -15,16 +21,35 @@ input LoginInput {
 }
 
 type Mutation {
+  createPost(createPostInput: CreatePostInput!): Post!
   createUser(createUserInput: CreateUserInput!): User!
+  removePost(id: Int!): Post!
   removeUser: User!
+  updatePost(updatePostInput: UpdatePostInput!): Post!
   updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type Post {
+  isPublic: Boolean!
+  postDescription: String!
+  postTitle: String!
+  postedBy: User!
 }
 
 type Query {
   login(loginCredentials: LoginInput!): UserType!
   myProfile: User!
+  post(id: Int!): Post!
+  posts: [Post!]!
   user(id: Int!): User!
   users: [User!]!
+}
+
+input UpdatePostInput {
+  id: Int!
+  isPublic: Boolean
+  postDescription: String
+  postTitle: String
 }
 
 input UpdateUserInput {
