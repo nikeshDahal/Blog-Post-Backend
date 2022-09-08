@@ -13,7 +13,8 @@ export class PostsResolver {
   @UseGuards(JwtAuthGuard)
   @Mutation(() => Post)
   async createPost(@CurrentUser() CurrentUser:any,@Args('createPostInput') createPostInput: CreatePostInput) {
-  return await this.postsService.create(CurrentUser._id,createPostInput);
+  const [post] = await this.postsService.create(CurrentUser._id,createPostInput);
+  return post;
   }
 
   @Query(() => [Post], { name: 'posts' })

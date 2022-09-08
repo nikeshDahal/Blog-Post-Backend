@@ -24,33 +24,33 @@ export class PostsService {
       isPublic,
       postedBy:ID
     })
-    const createPost = await newPost.save(); 
-    const user = await this.usersService.findOne(currentUser._id)
-    console.log("post and user details :=>",{createPost,user})
-    return{
-      postTitle,
-      postDescription,
-      isPublic,
-      postedBy:user
-    }
-    
-    // const post = this.postModule.aggregate([
-    //   {
-    //     $match:{
-    //       postedBy:currentUser._id
-    //     },
-    //   },
-    //   {
-    //     $lookup:{
-    //       from:"users",
-    //       localField:"postedBy",
-    //       foreignField:"_id",
-    //       as:"postedBy"
-    //     },
-    //   }
-    // ])
-    // console.log("aggregare =>",post)
-    return "post";
+    const createdPost = await newPost.save(); 
+    // const user = await this.usersService.findOne(currentUser._id)
+    // console.log("post and user details :=>",{createdPost,user})
+    // return{
+    //   postTitle,
+    //   postDescription,
+    //   isPublic,
+    //   postedBy:user
+    // }
+    console.log("posts",createdPost)
+    const post = this.postModule.aggregate([
+      {
+        $match:{
+          _id:createdPost._id
+        },
+      },
+      {
+        $lookup:{
+          from:"users",
+          localField:"postedBy",
+          foreignField:"_id",
+          as:"postedBy"
+        },
+      },
+      {$unwind: '$postedBy'},
+    ])
+    return post;
   }
 
   findAll() {
