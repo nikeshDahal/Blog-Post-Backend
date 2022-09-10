@@ -6,6 +6,7 @@ import { UpdatePostInput } from './dto/update-post.input';
 import { CurrentUser } from '../auth/current.user';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { PostResponse } from './dto/response-post.output';
 
 @Resolver(() => Post)
 export class PostsResolver {
@@ -17,23 +18,29 @@ export class PostsResolver {
   return post;
   }
 
-  @Query(() => [Post], { name: 'posts' })
+  @UseGuards(JwtAuthGuard)
+  @Query(() => [PostResponse], { name: 'posts' })
   async findAll() {
-   return await this.postsService.findAll();
+   const post = await this.postsService.findAll();
+   console.log(post)
+   return post
   }
 
-  @Query(() => Post, { name: 'post' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.postsService.findOne(id);
-  }
+  // @Query(() => Post, { name: 'post' })
+  // async findOne(@Args('id') id: string) {
+  //   const [post]= await this.postsService.findOne(id);
+  //   return post
+  // }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Post)
-  updatePost(@Args('updatePostInput') updatePostInput: UpdatePostInput) {
-    return this.postsService.update(updatePostInput.id, updatePostInput);
+  updatePost(@CurrentUser() CurrentUser:any,@Args('updatePostInput') updatePostInput: UpdatePostInput) {
+    return this.postsService.update(CurrentUser,updatePostInput);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Post)
-  removePost(@Args('id', { type: () => Int }) id: number) {
-    return this.postsService.remove(id);
+  removePost(@CurrentUser() CurrentUser:any,@Args('id') id: string) {
+    return this.postsService.remove(CurrentUser,id);
   }
 }

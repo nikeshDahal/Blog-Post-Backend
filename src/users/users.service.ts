@@ -38,9 +38,9 @@ export class UsersService {
     return await this.userModel.find({ email });
   }
 
-  async findAll() {
-    return await this.userModel.find();
-  }
+  // async findAll() {
+  //   return await this.userModel.find();
+  // }
 
   async findOne(id: string) {
     return await this.userModel.findOne({ _id: id });
@@ -75,8 +75,4 @@ export class UsersService {
     console.log('removed user =>', user);
     return user;
   }
-
-  // async findUserDetails(id:string){
-  //   return await this.userModel.findOne({_id:id})
-  // }
 }

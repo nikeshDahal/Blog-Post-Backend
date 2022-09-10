@@ -23,7 +23,7 @@ input LoginInput {
 type Mutation {
   createPost(createPostInput: CreatePostInput!): Post!
   createUser(createUserInput: CreateUserInput!): User!
-  removePost(id: Int!): Post!
+  removePost(id: String!): Post!
   removeUser: User!
   updatePost(updatePostInput: UpdatePostInput!): Post!
   updateUser(updateUserInput: UpdateUserInput!): User!
@@ -36,17 +36,23 @@ type Post {
   postedBy: User!
 }
 
+type PostResponse {
+  _id: String!
+  isPublic: Boolean
+  postDescription: String
+  postTitle: String
+  postedBy: User
+}
+
 type Query {
   login(loginCredentials: LoginInput!): UserType!
   myProfile: User!
-  post(id: Int!): Post!
-  posts: [Post!]!
+  posts: [PostResponse!]!
   user(id: Int!): User!
-  users: [User!]!
 }
 
 input UpdatePostInput {
-  id: Int!
+  id: String!
   isPublic: Boolean
   postDescription: String
   postTitle: String
