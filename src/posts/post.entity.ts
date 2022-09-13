@@ -2,7 +2,7 @@ import { ObjectType, Field, Int  } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { User } from '../users/user.entity';
-
+import {Comment} from '../comments/entities/comment.entity'
 export type PostDoccument = Post & Document
 
 @Schema()
@@ -36,6 +36,9 @@ export class Post {
   @Prop({  type: mongoose.Schema.Types.ObjectId, ref: 'User'})
   @Field()
   postedBy: User;
+
+  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
+  // comments: Comment[];
 
 }
 

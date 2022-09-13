@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePostInput } from './dto/create-post.input';
 import { UpdatePostInput } from './dto/update-post.input';
 import mongoose, { Model } from 'mongoose';
@@ -52,8 +56,8 @@ export class PostsService {
     return post;
   }
 
-  findAll() {
-    const posts = this.postModel.aggregate([
+  async findAll() {
+    const posts = await this.postModel.aggregate([
       {
         $match: {
           isPublic: { $eq: true },
@@ -80,44 +84,52 @@ export class PostsService {
         },
       },
       { $unwind: '$postedBy' },
+      {
+        //stage3 to get comment  details
+        $lookup: {
+          from: 'comments',
+          let: { post_Id: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: [
+                        '$postId',
+                        '$$post_Id' /*declared varaible form let */,
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $limit: 5,
+            },
+          ],
+          as: 'comments',
+        },
+      },
+
     ]);
     return posts;
   }
 
-  // findOne(id: string) {
-  //   const post = this.postModel.aggregate([
-  //     {
-  //       $match: {
-  //         $and: [
-  //           {
-  //             _id: id,
-  //           },
-  //           {
-  //             isPublic: true,
-  //           },
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       $lookup: {
-  //         from: 'users',
-  //         localField: 'postedBy',
-  //         foreignField: '_id',
-  //         as: 'postedBy',
-  //       },
-  //     },
-  //     { $unwind: '$postedBy' },
-  //   ]);
-  //   return post;
-  // }
+  async findOne(id: string) {
+    // const ID =  new mongoose.Types.ObjectId(id)
+    console.log('id', id);
+    const post = await this.postModel.findById({ _id: id });
+    return post;
+  }
 
-  async update( currentUser: any,updatePostInput: UpdatePostInput) {
+  async update(currentUser: any, updatePostInput: UpdatePostInput) {
     const [post] = await this.postModel.find({
-      _id:updatePostInput.id
-    })
-    console.log("update", post)
-    if(post.postedBy.toString() != currentUser._id.toString()){
-      throw new BadRequestException("Author Invalid");
+      _id: updatePostInput.id,
+    });
+    console.log('update', post);
+    if (post.postedBy.toString() != currentUser._id.toString()) {
+      throw new BadRequestException('Author Invalid');
     }
     const titleExists = await this.postModel.findOne({
       postTitle: updatePostInput.postTitle,
@@ -125,20 +137,26 @@ export class PostsService {
     if (titleExists) {
       throw new BadRequestException('Post title is already taken');
     }
-    const updatedPost = await this.postModel.findOneAndUpdate({_id:updatePostInput.id},{$set:updatePostInput},{new:true}).exec();
-    if(!updatedPost){
+    const updatedPost = await this.postModel
+      .findOneAndUpdate(
+        { _id: updatePostInput.id },
+        { $set: updatePostInput },
+        { new: true },
+      )
+      .exec();
+    if (!updatedPost) {
       throw new NotFoundException('post not found');
     }
-    console.log("updated Post",updatedPost)
+    console.log('updated Post', updatedPost);
     return updatedPost;
   }
 
-  async remove(CurrentUser:any,id: string) {
+  async remove(CurrentUser: any, id: string) {
     const [post] = await this.postModel.find({
-      _id:id
-    })
-    if(post.postedBy.toString() != CurrentUser._id.toString()){
-      throw new BadRequestException("Author Invalid");
+      _id: id,
+    });
+    if (post.postedBy.toString() != CurrentUser._id.toString()) {
+      throw new BadRequestException('Author Invalid');
     }
     const postFound = await this.postModel.findOneAndDelete({ _id: id }).exec();
     if (!postFound) {

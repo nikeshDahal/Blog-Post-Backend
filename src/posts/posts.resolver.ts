@@ -22,7 +22,7 @@ export class PostsResolver {
   @Query(() => [PostResponse], { name: 'posts' })
   async findAll() {
    const post = await this.postsService.findAll();
-   console.log(post)
+   console.log("posts list =>",post)
    return post
   }
 
