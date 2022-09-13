@@ -37,8 +37,13 @@ export class Post {
   @Field()
   postedBy: User;
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
-  // comments: Comment[];
+  @Prop()
+  @Field(()=>Number,{nullable:true})
+  totalComments:number;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
+  comments: Comment[];
+
 
 }
 

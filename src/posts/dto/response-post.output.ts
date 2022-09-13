@@ -11,6 +11,9 @@ export class PostResponse extends PartialType(Post){
     @Field(()=>String)
     _id:string
 
+    @Field(()=>Number,{nullable:true})
+    totalComments:number;
+
     @Field(()=>[Comment],{nullable:true})
     comments:Comment[];
 }

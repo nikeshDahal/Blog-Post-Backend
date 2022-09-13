@@ -8,10 +8,9 @@ import { UpdatePostInput } from './dto/update-post.input';
 import mongoose, { Model } from 'mongoose';
 import { Post } from './post.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
-import { threadId } from 'worker_threads';
-import { CurrentUser } from 'src/auth/current.user';
+import { pipeline } from 'stream';
+
 
 @Injectable()
 export class PostsService {
@@ -85,6 +84,16 @@ export class PostsService {
       },
       { $unwind: '$postedBy' },
       {
+        $lookup:{
+          from: "comments",
+          let:{post_Id:"$_id"},
+          pipeline:[{ $match: { $expr: { $eq: ["$$post_Id", "$postId"] } } }],
+          as : "totalComments"
+        }
+
+      },
+      { $addFields: { totalComments: { $size: "$totalComments" }}},
+      {
         //stage3 to get comment  details
         $lookup: {
           from: 'comments',
@@ -107,11 +116,23 @@ export class PostsService {
             {
               $limit: 5,
             },
+            {
+              $lookup: {
+                from:"users",
+                let:{user_Id:"$commentedBy"},
+                pipeline:[
+                  {
+                    $match: { $expr: { $and: [{ $eq: ["$_id", "$$user_Id"] }] } }
+                  },
+                ],
+                as:"commentedBy"
+              },
+            },
+            { $unwind: '$commentedBy' },
           ],
           as: 'comments',
         },
       },
-
     ]);
     return posts;
   }

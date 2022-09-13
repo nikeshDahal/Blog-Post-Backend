@@ -55,6 +55,7 @@ type Post {
   postDescription: String!
   postTitle: String!
   postedBy: User!
+  totalComments: Float
 }
 
 type PostResponse {
@@ -64,6 +65,7 @@ type PostResponse {
   postDescription: String
   postTitle: String
   postedBy: User
+  totalComments: Float
 }
 
 type Query {
